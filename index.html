@@ -312,12 +312,36 @@ footer {
   </div>
 </section>
 
+<!-- 访问统计 & 留言板 -->
+<section id="guestbook" style="background:var(--surface);border-top:1px solid var(--border);">
+  <div style="max-width:960px;margin:0 auto;padding:4rem 2rem;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
+      <h2 class="fade-up" style="font-size:1.5rem;margin:0;">📊 访客统计</h2>
+      <div class="fade-up" style="font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+        <span id="view-count">--</span> <span style="font-size:0.9rem;color:var(--muted);font-weight:400;">次访问</span>
+      </div>
+    </div>
+    <h2 class="fade-up" style="font-size:1.5rem;margin-bottom:1rem;">💬 留言板</h2>
+    <div class="fade-up" style="margin-bottom:1.5rem;">
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem;">
+        <input id="guest-name" placeholder="你的昵称" style="flex:1;min-width:120px;padding:0.6rem 1rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.9rem;outline:none;" />
+        <input id="guest-msg" placeholder="写点什么吧..." style="flex:2;min-width:200px;padding:0.6rem 1rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.9rem;outline:none;" />
+        <button onclick="submitGuestbook()" style="padding:0.6rem 1.5rem;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:0.9rem;font-weight:600;cursor:pointer;">留言</button>
+      </div>
+      <p id="guest-tip" style="font-size:0.75rem;color:var(--muted);margin:0;">无需登录，留言通过 GitHub Issues 存储</p>
+    </div>
+    <div id="guest-list" style="max-height:400px;overflow-y:auto;">
+      <p style="color:var(--muted);font-size:0.85rem;">加载中...</p>
+    </div>
+  </div>
+</section>
+
 <footer>
   <p>© 2026 秦总 · 用代码改变世界 · 🦞 Powered by OWL</p>
 </footer>
 
 <script>
-// Particles
+// ===== Particles =====
 const container = document.getElementById('particles');
 for (let i = 0; i < 40; i++) {
   const p = document.createElement('div');
@@ -329,14 +353,13 @@ for (let i = 0; i < 40; i++) {
   container.appendChild(p);
 }
 
-// Scroll animations
+// ===== Scroll animations =====
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1 });
-
 document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-// Smooth scroll
+// ===== Smooth scroll =====
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     e.preventDefault();
@@ -344,6 +367,93 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
 });
+
+// ===== 访问统计 & 留言板 (GitHub API) =====
+const GITHUB_USER = 'laogou2026';
+const DATA_REPO = 'qindev-data';
+const VIEWS_ISSUE = 1;
+const GUESTBOOK_ISSUE = 2;
+
+async function fetchJSON(url) {
+  const r = await fetch(url);
+  return r.json();
+}
+
+// 访问计数：读取+更新
+async function updateViewCount() {
+  try {
+    const issue = await fetchJSON(`https://api.github.com/repos/${GITHUB_USER}/${DATA_REPO}/issues/${VIEWS_ISSUE}`);
+    let count = parseInt(issue.body) || 0;
+    count++;
+    // 更新计数
+    await fetch(`https://api.github.com/repos/${GITHUB_USER}/${DATA_REPO}/issues/${VIEWS_ISSUE}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+      body: JSON.stringify({ body: String(count) })
+    });
+    document.getElementById('view-count').textContent = count.toLocaleString();
+  } catch(e) {
+    document.getElementById('view-count').textContent = 'N/A';
+    console.error('访问统计失败:', e);
+  }
+}
+
+// 加载留言
+async function loadGuestbook() {
+  const list = document.getElementById('guest-list');
+  try {
+    const comments = await fetchJSON(`https://api.github.com/repos/${GITHUB_USER}/${DATA_REPO}/issues/${GUESTBOOK_ISSUE}/comments?per_page=50`);
+    if (comments.length === 0) {
+      list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">还没有留言，来抢沙发吧！</p>';
+      return;
+    }
+    list.innerHTML = comments.reverse().map(c => {
+      const date = new Date(c.created_at).toLocaleDateString('zh-CN');
+      const body = c.body.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+      return `<div style="padding:1rem 0;border-bottom:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+          <strong style="color:var(--accent);font-size:0.9rem;">${c.user.login}</strong>
+          <span style="font-size:0.75rem;color:var(--muted);">${date}</span>
+        </div>
+        <p style="font-size:0.85rem;color:var(--text);margin:0;line-height:1.5;">${body}</p>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">加载失败，请刷新重试</p>';
+    console.error('留言加载失败:', e);
+  }
+}
+
+// 提交留言
+async function submitGuestbook() {
+  const name = document.getElementById('guest-name').value.trim();
+  const msg = document.getElementById('guest-msg').value.trim();
+  const tip = document.getElementById('guest-tip');
+  if (!name || !msg) { tip.textContent = '请填写昵称和留言内容'; return; }
+  tip.textContent = '提交中...';
+  try {
+    const body = `**${name}** 说：\n\n${msg}`;
+    const r = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${DATA_REPO}/issues/${GUESTBOOK_ISSUE}/comments`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+      body: JSON.stringify({ body })
+    });
+    if (r.ok) {
+      document.getElementById('guest-name').value = '';
+      document.getElementById('guest-msg').value = '';
+      tip.textContent = '留言成功！';
+      loadGuestbook();
+    } else {
+      tip.textContent = '提交失败，请稍后重试';
+    }
+  } catch(e) {
+    tip.textContent = '网络错误，请稍后重试';
+  }
+}
+
+// 页面加载时执行
+updateViewCount();
+loadGuestbook();
 </script>
 </body>
 </html>
