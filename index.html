@@ -129,17 +129,6 @@ section .section-desc { color: var(--muted); margin-bottom: 3rem; }
 .stat-card .number { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .stat-card .label { color: var(--muted); font-size: 0.85rem; margin-top: 0.3rem; }
 
-/* === FUNDS === */
-.funds-table { width: 100%; border-collapse: collapse; }
-.funds-table th, .funds-table td {
-  padding: 0.8rem 1rem; text-align: left; border-bottom: 1px solid var(--border);
-  font-size: 0.9rem;
-}
-.funds-table th { color: var(--muted); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; }
-.funds-table tr:hover { background: var(--surface); }
-.up { color: var(--red); }
-.down { color: var(--green); }
-
 /* === TECH === */
 .tech-grid { display: flex; flex-wrap: wrap; gap: 0.8rem; }
 .tech-item {
@@ -287,26 +276,6 @@ footer {
   </div>
 </section>
 
-<!-- Funds -->
-<section id="funds">
-  <h2 class="fade-up">💰 基金关注</h2>
-  <p class="section-desc fade-up">持续关注的基金标的</p>
-  <div class="fade-up" style="overflow-x: auto;">
-  <table class="funds-table">
-    <thead>
-      <tr><th>基金</th><th>代码</th><th>类型</th><th>关注点</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>易方达瑞享混合E</td><td>001438</td><td>混合</td><td>AI/科技赛道，近1年+291%</td></tr>
-      <tr><td>易方达增强回报债券A</td><td>110017</td><td>债券</td><td>稳健型，近1年+5.46%</td></tr>
-      <tr><td></td><td>016874</td><td>-</td><td>持续关注中</td></tr>
-      <tr><td></td><td>001437</td><td>-</td><td>持续关注中</td></tr>
-      <tr><td></td><td>005698</td><td>-</td><td>持续关注中</td></tr>
-    </tbody>
-  </table>
-  </div>
-</section>
-
 <!-- Tech -->
 <section id="tech">
   <h2 class="section-title fade-up">🛠 技术栈</h2>
@@ -350,31 +319,4 @@ footer {
 <script>
 // Particles
 const container = document.getElementById('particles');
-for (let i = 0; i < 40; i++) {
-  const p = document.createElement('div');
-  p.className = 'particle';
-  p.style.left = Math.random() * 100 + '%';
-  p.style.animationDuration = (Math.random() * 15 + 10) + 's';
-  p.style.animationDelay = (Math.random() * 10) + 's';
-  p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
-  container.appendChild(p);
-}
-
-// Scroll animations
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-
-// Smooth scroll
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    e.preventDefault();
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-});
-</script>
-</body>
-</html>
+for</tool_call>
