@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>秦总 | 全栈开发者</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a0f;
+  --surface: #111118;
+  --border: #1e1e2e;
+  --text: #e4e4e7;
+  --muted: #71717a;
+  --accent: #6366f1;
+  --accent-glow: rgba(99, 102, 241, 0.15);
+  --green: #22c55e;
+  --yellow: #eab308;
+  --red: #ef4444;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* === NAV === */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+nav .logo { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.5px; }
+nav .logo span { color: var(--accent); }
+nav .links a {
+  color: var(--muted); text-decoration: none; margin-left: 2rem;
+  font-size: 0.9rem; transition: color 0.3s;
+}
+nav .links a:hover { color: var(--text); }
+
+/* === HERO === */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  position: relative;
+  padding: 2rem;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: pulse 8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.hero .avatar {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #8b5cf6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem; margin-bottom: 1.5rem;
+  box-shadow: 0 0 40px var(--accent-glow);
+}
+
+.hero h1 { font-size: 3rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 0.5rem; }
+.hero h1 span { background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero .subtitle { font-size: 1.2rem; color: var(--muted); margin-bottom: 2rem; max-width: 500px; }
+
+.tags { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2.5rem; }
+.tags span {
+  padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.8rem;
+  background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+}
+
+.btn {
+  display: inline-block; padding: 0.75rem 2rem; border-radius: 8px;
+  font-size: 0.95rem; font-weight: 600; text-decoration: none;
+  transition: all 0.3s; cursor: pointer;
+}
+.btn-primary { background: var(--accent); color: #fff; border: none; }
+.btn-primary:hover { background: #4f46e5; transform: translateY(-2px); box-shadow: 0 8px 25px var(--accent-glow); }
+.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); margin-left: 1rem; }
+.btn-outline:hover { border-color: var(--accent); }
+
+/* === SECTIONS === */
+section { padding: 6rem 2rem; max-width: 960px; margin: 0 auto; }
+section h2 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
+section .section-desc { color: var(--muted); margin-bottom: 3rem; }
+
+/* === PROJECTS === */
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+.project-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.5rem; transition: all 0.3s; cursor: default;
+}
+.project-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+.project-card .icon { font-size: 2rem; margin-bottom: 1rem; }
+.project-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+.project-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
+.project-card .stack { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.project-card .stack span {
+  font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 4px;
+  background: rgba(99,102,241,0.1); color: var(--accent);
+}
+
+/* === STATS === */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.5rem; text-align: center;
+}
+.stat-card .number { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.stat-card .label { color: var(--muted); font-size: 0.85rem; margin-top: 0.3rem; }
+
+/* === FUNDS === */
+.funds-table { width: 100%; border-collapse: collapse; }
+.funds-table th, .funds-table td {
+  padding: 0.8rem 1rem; text-align: left; border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+.funds-table th { color: var(--muted); font-weight: 500; font-size: 0.8rem; text-transform: uppercase; }
+.funds-table tr:hover { background: var(--surface); }
+.up { color: var(--red); }
+.down { color: var(--green); }
+
+/* === TECH === */
+.tech-grid { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+.tech-item {
+  padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.9rem;
+  background: var(--surface); border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.tech-item:hover { border-color: var(--accent); background: var(--accent-glow); }
+
+/* === CONTACT === */
+.contact-box {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  padding: 3rem; text-align: center;
+}
+.contact-box p { color: var(--muted); margin-bottom: 2rem; }
+.contact-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.contact-links a {
+  padding: 0.6rem 1.5rem; border-radius: 8px; font-size: 0.9rem;
+  background: var(--bg); border: 1px solid var(--border); color: var(--text);
+  text-decoration: none; transition: all 0.3s;
+}
+.contact-links a:hover { border-color: var(--accent); }
+
+/* === FOOTER === */
+footer {
+  text-align: center; padding: 3rem 2rem; color: var(--muted); font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+}
+
+/* === ANIMATED BG PARTICLES === */
+.particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+.particle {
+  position: absolute; width: 2px; height: 2px; background: var(--accent);
+  border-radius: 50%; opacity: 0;
+  animation: float linear infinite;
+}
+@keyframes float {
+  0% { opacity: 0; transform: translateY(100vh) scale(0); }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+}
+
+/* === SCROLL ANIMATIONS === */
+.fade-up {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 640px) {
+  .hero h1 { font-size: 2rem; }
+  nav .links { display: none; }
+  section { padding: 4rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="logo">QIN<span>DEV</span></div>
+  <div class="links">
+    <a href="#projects">项目</a>
+    <a href="#stats">数据</a>
+    <a href="#tech">技术栈</a>
+    <a href="#contact">联系</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="avatar">🦞</div>
+  <h1>秦总 <span>全栈开发</span></h1>
+  <p class="subtitle">写代码 · 做产品 · 关注市场<br>用技术解决实际问题</p>
+  <div class="tags">
+    <span>Python</span>
+    <span>Node.js</span>
+    <span>WebRTC</span>
+    <span>Flask</span>
+    <span>全栈开发</span>
+  </div>
+  <div>
+    <a href="#projects" class="btn btn-primary">查看项目</a>
+    <a href="#contact" class="btn btn-outline">联系我</a>
+  </div>
+</div>
+
+<!-- Projects -->
+<section id="projects">
+  <h2 class="fade-up">💼 项目</h2>
+  <p class="section-desc fade-up">最近做的几个东西</p>
+  <div class="projects-grid">
+    <div class="project-card fade-up">
+      <div class="icon">♟️</div>
+      <h3>象棋游戏</h3>
+      <p>完整的象棋对弈游戏，支持人机对战和双人对战，已打包为桌面应用。</p>
+      <div class="stack"><span>Python</span><span>Pygame</span><span>EXE打包</span></div>
+    </div>
+    <div class="project-card fade-up">
+      <div class="icon">📞</div>
+      <h3>WebRTC 语音通话</h3>
+      <p>基于WebRTC的双向语音通话系统，支持实时音视频通信，低延迟高清晰。</p>
+      <div class="stack"><span>Node.js</span><span>Socket.io</span><span>WebRTC</span><span>Express</span></div>
+    </div>
+    <div class="project-card fade-up">
+      <div class="icon">🤖</div>
+      <h3>飞书机器人</h3>
+      <p>飞书智能机器人，支持桌面文件管理、消息自动化、数据爬取等功能。</p>
+      <div class="stack"><span>Flask</span><span>飞书API</span><span>Python</span><span>Webhook</span></div>
+    </div>
+    <div class="project-card fade-up">
+      <div class="icon">📊</div>
+      <h3>基金数据爬虫</h3>
+      <p>自动爬取天天基金净值数据，定时更新，支持多基金监控和历史数据分析。</p>
+      <div class="stack"><span>Python</span><span>BeautifulSoup</span><span>Cron</span><span>爬虫</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section id="stats">
+  <h2 class="fade-up">📈 数据概览</h2>
+  <p class="section-desc fade-up">一些关键数字</p>
+  <div class="stats-grid">
+    <div class="stat-card fade-up">
+      <div class="number">4+</div>
+      <div class="label">完成项目</div>
+    </div>
+    <div class="stat-card fade-up">
+      <div class="number">5+</div>
+      <div class="label">编程语言</div>
+    </div>
+    <div class="stat-card fade-up">
+      <div class="number">24/7</div>
+      <div class="label">AI助手在线</div>
+    </div>
+    <div class="stat-card fade-up">
+      <div class="number">∞</div>
+      <div class="label">学习动力</div>
+    </div>
+  </div>
+</section>
+
+<!-- Funds -->
+<section id="funds">
+  <h2 class="fade-up">💰 基金关注</h2>
+  <p class="section-desc fade-up">持续关注的基金标的</p>
+  <div class="fade-up" style="overflow-x: auto;">
+  <table class="funds-table">
+    <thead>
+      <tr><th>基金</th><th>代码</th><th>类型</th><th>关注点</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>易方达瑞享混合E</td><td>001438</td><td>混合</td><td>AI/科技赛道，近1年+291%</td></tr>
+      <tr><td>易方达增强回报债券A</td><td>110017</td><td>债券</td><td>稳健型，近1年+5.46%</td></tr>
+      <tr><td></td><td>016874</td><td>-</td><td>持续关注中</td></tr>
+      <tr><td></td><td>001437</td><td>-</td><td>持续关注中</td></tr>
+      <tr><td></td><td>005698</td><td>-</td><td>持续关注中</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- Tech -->
+<section id="tech">
+  <h2 class="section-title fade-up">🛠 技术栈</h2>
+  <p class="section-desc fade-up">日常使用的技术和工具</p>
+  <div class="tech-grid fade-up">
+    <div class="tech-item">Python</div>
+    <div class="tech-item">JavaScript</div>
+    <div class="tech-item">Node.js</div>
+    <div class="tech-item">Flask</div>
+    <div class="tech-item">Express</div>
+    <div class="tech-item">WebRTC</div>
+    <div class="tech-item">Socket.io</div>
+    <div class="tech-item">HTML5 / CSS3</div>
+    <div class="tech-item">Git</div>
+    <div class="tech-item">飞书 API</div>
+    <div class="tech-item">BeautifulSoup</div>
+    <div class="tech-item">Pygame</div>
+    <div class="tech-item">PowerShell</div>
+    <div class="tech-item">SQL</div>
+    <div class="tech-item">REST API</div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <div class="contact-box fade-up">
+    <h2>📬 联系</h2>
+    <p>有项目合作或技术交流？随时联系</p>
+    <div class="contact-links">
+      <a href="#">飞书</a>
+      <a href="#">微信</a>
+      <a href="mailto:">邮箱</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 秦总 · 用代码改变世界 · 🦞 Powered by OWL</p>
+</footer>
+
+<script>
+// Particles
+const container = document.getElementById('particles');
+for (let i = 0; i < 40; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+  p.style.animationDelay = (Math.random() * 10) + 's';
+  p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
+  container.appendChild(p);
+}
+
+// Scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>
