@@ -179,10 +179,53 @@ footer {
 }
 .fade-up.visible { opacity: 1; transform: translateY(0); }
 
+/* === GUESTBOOK === */
+#guestbook { background: var(--surface); border-top: 1px solid var(--border); }
+#guestbook .container { max-width: 960px; margin: 0 auto; padding: 4rem 2rem; }
+#guestbook h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+.view-count {
+  font-size: 2rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.view-count-label { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
+.guestbook-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+.guestbook-form { margin-bottom: 1.5rem; }
+.guestbook-form input, .guestbook-form textarea {
+  width: 100%; padding: 0.7rem 1rem; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--bg);
+  color: var(--text); font-size: 0.9rem; outline: none;
+  font-family: inherit;
+}
+.guestbook-form input:focus, .guestbook-form textarea:focus { border-color: var(--accent); }
+.guestbook-form textarea { height: 80px; resize: vertical; }
+.guestbook-form .form-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.guestbook-form .form-row input { flex: 1; min-width: 120px; }
+.guestbook-form .btn-submit {
+  padding: 0.6rem 1.5rem; border-radius: 8px; font-size: 0.9rem;
+  background: var(--accent); color: #fff; border: none; cursor: pointer;
+  transition: all 0.3s;
+}
+.guestbook-form .btn-submit:hover { background: #4f46e5; transform: translateY(-2px); }
+.guestbook-form .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.guest-tip { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; min-height: 1.2em; }
+.guest-tip.success { color: var(--green); }
+.guest-tip.error { color: var(--red); }
+
+.guest-list { max-height: 600px; overflow-y: auto; }
+.guest-item { padding: 1rem 0; border-bottom: 1px solid var(--border); }
+.guest-item:last-child { border-bottom: none; }
+.guest-item .meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+.guest-item .name { color: var(--accent); font-size: 0.9rem; font-weight: 600; }
+.guest-item .date { font-size: 0.75rem; color: var(--muted); }
+.guest-item .msg { font-size: 0.85rem; color: var(--text); line-height: 1.6; word-break: break-word; }
+.guest-empty { color: var(--muted); font-size: 0.85rem; padding: 2rem 0; text-align: center; }
+
 @media (max-width: 640px) {
   .hero h1 { font-size: 2rem; }
   nav .links { display: none; }
   section { padding: 4rem 1.5rem; }
+  .guestbook-form .form-row { flex-direction: column; }
 }
 </style>
 </head>
@@ -199,6 +242,7 @@ footer {
     <a href="#stats">数据</a>
     <a href="#tech">技术栈</a>
     <a href="#contact">联系</a>
+    <a href="#guestbook">留言</a>
   </div>
 </nav>
 
@@ -313,45 +357,54 @@ footer {
 </section>
 
 <!-- 访问统计 & 留言板 -->
-<section id="guestbook" style="background:var(--surface);border-top:1px solid var(--border);">
-  <div style="max-width:960px;margin:0 auto;padding:4rem 2rem;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;">
-      <h2 class="fade-up" style="font-size:1.5rem;margin:0;">📊 访客统计</h2>
-      <div class="fade-up" style="font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
-        <span id="view-count">--</span> <span style="font-size:0.9rem;color:var(--muted);font-weight:400;">次访问</span>
+<section id="guestbook">
+  <div class="container">
+    <div class="guestbook-header">
+      <h2 class="fade-up">📊 访客统计</h2>
+      <div class="fade-up view-count">
+        <span id="view-count">0</span> <span class="view-count-label">次访问</span>
       </div>
     </div>
+
     <h2 class="fade-up" style="font-size:1.5rem;margin-bottom:1rem;">💬 留言板</h2>
-    <div class="fade-up" style="margin-bottom:1.5rem;">
-      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem;">
-        <input id="guest-name" placeholder="你的昵称" style="flex:1;min-width:120px;padding:0.6rem 1rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.9rem;outline:none;" />
-        <input id="guest-msg" placeholder="写点什么吧..." style="flex:2;min-width:200px;padding:0.6rem 1rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.9rem;outline:none;" />
-        <button onclick="submitGuestbook()" style="padding:0.6rem 1.5rem;border-radius:8px;border:none;background:var(--accent);color:#fff;font-size:0.9rem;font-weight:600;cursor:pointer;">留言</button>
+    <div class="fade-up guestbook-form">
+      <div class="form-row">
+        <input id="guest-name" placeholder="你的昵称" maxlength="20" />
       </div>
-      <p id="guest-tip" style="font-size:0.75rem;color:var(--muted);margin:0;">无需登录，留言通过 GitHub Issues 存储</p>
+      <div class="form-row">
+        <textarea id="guest-msg" placeholder="说点什么吧..." maxlength="500"></textarea>
+      </div>
+      <div class="form-row">
+        <button class="btn-submit" id="btn-submit" onclick="submitGuestbook()">发表留言</button>
+      </div>
+      <div class="guest-tip" id="guest-tip"></div>
     </div>
-    <div id="guest-list" style="max-height:400px;overflow-y:auto;">
-      <p style="color:var(--muted);font-size:0.85rem;">加载中...</p>
+
+    <div class="guest-list fade-up" id="guest-list">
+      <div class="guest-empty">加载中...</div>
     </div>
   </div>
 </section>
 
+<!-- Footer -->
 <footer>
-  <p>© 2026 秦总 · 用代码改变世界 · 🦞 Powered by OWL</p>
+  <p>© 2026 秦总 · 用技术解决实际问题</p>
 </footer>
 
 <script>
 // ===== Particles =====
-const container = document.getElementById('particles');
-for (let i = 0; i < 40; i++) {
-  const p = document.createElement('div');
-  p.className = 'particle';
-  p.style.left = Math.random() * 100 + '%';
-  p.style.animationDuration = (Math.random() * 15 + 10) + 's';
-  p.style.animationDelay = (Math.random() * 10) + 's';
-  p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
-  container.appendChild(p);
-}
+(function() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
+    container.appendChild(p);
+  }
+})();
 
 // ===== Scroll animations =====
 const observer = new IntersectionObserver((entries) => {
@@ -368,90 +421,109 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 
-// ===== 访问统计 & 留言板 (GitHub API) =====
-const GITHUB_USER = 'laogou2026';
-const DATA_REPO = 'qindev-data';
-const VIEWS_ISSUE = 1;
-const GUESTBOOK_ISSUE = 2;
-
-async function fetchJSON(url) {
-  const r = await fetch(url);
-  return r.json();
-}
-
-// 访问计数：读取+更新
-async function updateViewCount() {
+// ===== 访问统计 (localStorage) =====
+function updateViewCount() {
   try {
-    const issue = await fetchJSON(`https://api.github.com/repos/${GITHUB_USER}/${DATA_REPO}/issues/${VIEWS_ISSUE}`);
-    let count = parseInt(issue.body) || 0;
+    let count = parseInt(localStorage.getItem('qindev_views') || '0');
     count++;
-    // 更新计数
-    await fetch(`https://api.github.com/repos/${GITHUB_USER}/${DATA_REPO}/issues/${VIEWS_ISSUE}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
-      body: JSON.stringify({ body: String(count) })
-    });
+    localStorage.setItem('qindev_views', count.toString());
     document.getElementById('view-count').textContent = count.toLocaleString();
   } catch(e) {
-    document.getElementById('view-count').textContent = 'N/A';
-    console.error('访问统计失败:', e);
+    document.getElementById('view-count').textContent = '--';
   }
 }
 
-// 加载留言
-async function loadGuestbook() {
-  const list = document.getElementById('guest-list');
+// ===== 留言板 (localStorage) =====
+const STORAGE_KEY = 'qindev_guestbook';
+
+function getGuestbook() {
   try {
-    const comments = await fetchJSON(`https://api.github.com/repos/${GITHUB_USER}/${DATA_REPO}/issues/${GUESTBOOK_ISSUE}/comments?per_page=50`);
-    if (comments.length === 0) {
-      list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">还没有留言，来抢沙发吧！</p>';
-      return;
-    }
-    list.innerHTML = comments.reverse().map(c => {
-      const date = new Date(c.created_at).toLocaleDateString('zh-CN');
-      const body = c.body.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-      return `<div style="padding:1rem 0;border-bottom:1px solid var(--border);">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
-          <strong style="color:var(--accent);font-size:0.9rem;">${c.user.login}</strong>
-          <span style="font-size:0.75rem;color:var(--muted);">${date}</span>
-        </div>
-        <p style="font-size:0.85rem;color:var(--text);margin:0;line-height:1.5;">${body}</p>
-      </div>`;
-    }).join('');
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
   } catch(e) {
-    list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">加载失败，请刷新重试</p>';
-    console.error('留言加载失败:', e);
+    return [];
   }
 }
 
-// 提交留言
-async function submitGuestbook() {
+function saveGuestbook(list) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  } catch(e) {
+    console.error('保存留言失败:', e);
+  }
+}
+
+function loadGuestbook() {
+  const list = getGuestbook();
+  const container = document.getElementById('guest-list');
+
+  if (list.length === 0) {
+    container.innerHTML = '<div class="guest-empty">还没有留言，来抢沙发吧！</div>';
+    return;
+  }
+
+  // 显示最近20条，按时间倒序
+  const recent = list.slice(0, 20);
+  container.innerHTML = recent.map(item => {
+    const date = new Date(item.time).toLocaleDateString('zh-CN', {
+      year: 'numeric', month: '2-digit', day: '2-digit'
+    });
+    const msg = escapeHtml(item.message).replace(/\n/g, '<br>');
+    return `<div class="guest-item">
+      <div class="meta">
+        <span class="name">${escapeHtml(item.name)}</span>
+        <span class="date">${date}</span>
+      </div>
+      <div class="msg">${msg}</div>
+    </div>`;
+  }).join('');
+}
+
+function submitGuestbook() {
   const name = document.getElementById('guest-name').value.trim();
   const msg = document.getElementById('guest-msg').value.trim();
   const tip = document.getElementById('guest-tip');
-  if (!name || !msg) { tip.textContent = '请填写昵称和留言内容'; return; }
+  const btn = document.getElementById('btn-submit');
+
+  if (!name) { tip.textContent = '请填写昵称'; tip.className = 'guest-tip error'; return; }
+  if (!msg) { tip.textContent = '请填写留言内容'; tip.className = 'guest-tip error'; return; }
+  if (name.length > 20) { tip.textContent = '昵称最多20个字'; tip.className = 'guest-tip error'; return; }
+  if (msg.length > 500) { tip.textContent = '留言最多500个字'; tip.className = 'guest-tip error'; return; }
+
+  btn.disabled = true;
   tip.textContent = '提交中...';
-  try {
-    const body = `**${name}** 说：\n\n${msg}`;
-    const r = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${DATA_REPO}/issues/${GUESTBOOK_ISSUE}/comments`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
-      body: JSON.stringify({ body })
-    });
-    if (r.ok) {
+  tip.className = 'guest-tip';
+
+  // 模拟网络延迟
+  setTimeout(() => {
+    try {
+      const list = getGuestbook();
+      list.unshift({
+        name: name,
+        message: msg,
+        time: new Date().toISOString()
+      });
+      // 只保留最近200条
+      if (list.length > 200) list.length = 200;
+      saveGuestbook(list);
+
       document.getElementById('guest-name').value = '';
       document.getElementById('guest-msg').value = '';
       tip.textContent = '留言成功！';
+      tip.className = 'guest-tip success';
       loadGuestbook();
-    } else {
-      tip.textContent = '提交失败，请稍后重试';
+    } catch(e) {
+      tip.textContent = '提交失败，请重试';
+      tip.className = 'guest-tip error';
     }
-  } catch(e) {
-    tip.textContent = '网络错误，请稍后重试';
-  }
+    btn.disabled = false;
+  }, 300);
 }
 
-// 页面加载时执行
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ===== 页面加载时执行 =====
 updateViewCount();
 loadGuestbook();
 </script>
