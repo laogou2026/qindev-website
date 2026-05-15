@@ -1,531 +1,545 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>秦总 | 全栈开发者</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: { colors: { bg:'#0a0a0f', surface:'#111118', border:'#1e1e2e', text:'#e4e4e7', muted:'#71717a', accent:'#6366f1', green:'#22c55e', red:'#ef4444' } } } }
+</script>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-:root {
-  --bg: #0a0a0f;
-  --surface: #111118;
-  --border: #1e1e2e;
-  --text: #e4e4e7;
-  --muted: #71717a;
-  --accent: #6366f1;
-  --accent-glow: rgba(99, 102, 241, 0.15);
-  --green: #22c55e;
-  --yellow: #eab308;
-  --red: #ef4444;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-/* === NAV === */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(10, 10, 15, 0.85);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 2rem;
-  height: 60px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-nav .logo { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.5px; }
-nav .logo span { color: var(--accent); }
-nav .links a {
-  color: var(--muted); text-decoration: none; margin-left: 2rem;
-  font-size: 0.9rem; transition: color 0.3s;
-}
-nav .links a:hover { color: var(--text); }
-
-/* === HERO === */
-.hero {
-  min-height: 100vh;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center;
-  position: relative;
-  padding: 2rem;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-  top: 50%; left: 50%; transform: translate(-50%, -50%);
-  pointer-events: none;
-  animation: pulse 8s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-}
-
-.hero .avatar {
-  width: 100px; height: 100px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), #8b5cf6);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 2.5rem; margin-bottom: 1.5rem;
-  box-shadow: 0 0 40px var(--accent-glow);
-}
-
-.hero h1 { font-size: 3rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 0.5rem; }
-.hero h1 span { background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.hero .subtitle { font-size: 1.2rem; color: var(--muted); margin-bottom: 2rem; max-width: 500px; }
-
-.tags { display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2.5rem; }
-.tags span {
-  padding: 0.35rem 0.9rem; border-radius: 999px; font-size: 0.8rem;
-  background: var(--surface); border: 1px solid var(--border); color: var(--muted);
-}
-
-.btn {
-  display: inline-block; padding: 0.75rem 2rem; border-radius: 8px;
-  font-size: 0.95rem; font-weight: 600; text-decoration: none;
-  transition: all 0.3s; cursor: pointer;
-}
-.btn-primary { background: var(--accent); color: #fff; border: none; }
-.btn-primary:hover { background: #4f46e5; transform: translateY(-2px); box-shadow: 0 8px 25px var(--accent-glow); }
-.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); margin-left: 1rem; }
-.btn-outline:hover { border-color: var(--accent); }
-
-/* === SECTIONS === */
-section { padding: 6rem 2rem; max-width: 960px; margin: 0 auto; }
-section h2 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
-section .section-desc { color: var(--muted); margin-bottom: 3rem; }
-
-/* === PROJECTS === */
-.projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-.project-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-  padding: 1.5rem; transition: all 0.3s; cursor: default;
-}
-.project-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
-.project-card .icon { font-size: 2rem; margin-bottom: 1rem; }
-.project-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
-.project-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem; }
-.project-card .stack { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-.project-card .stack span {
-  font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 4px;
-  background: rgba(99,102,241,0.1); color: var(--accent);
-}
-
-/* === STATS === */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
-.stat-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-  padding: 1.5rem; text-align: center;
-}
-.stat-card .number { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.stat-card .label { color: var(--muted); font-size: 0.85rem; margin-top: 0.3rem; }
-
-/* === TECH === */
-.tech-grid { display: flex; flex-wrap: wrap; gap: 0.8rem; }
-.tech-item {
-  padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.9rem;
-  background: var(--surface); border: 1px solid var(--border);
-  transition: all 0.3s;
-}
-.tech-item:hover { border-color: var(--accent); background: var(--accent-glow); }
-
-/* === CONTACT === */
-.contact-box {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
-  padding: 3rem; text-align: center;
-}
-.contact-box p { color: var(--muted); margin-bottom: 2rem; }
-.contact-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-.contact-links a {
-  padding: 0.6rem 1.5rem; border-radius: 8px; font-size: 0.9rem;
-  background: var(--bg); border: 1px solid var(--border); color: var(--text);
-  text-decoration: none; transition: all 0.3s;
-}
-.contact-links a:hover { border-color: var(--accent); }
-
-/* === FOOTER === */
-footer {
-  text-align: center; padding: 3rem 2rem; color: var(--muted); font-size: 0.8rem;
-  border-top: 1px solid var(--border);
-}
-
-/* === ANIMATED BG PARTICLES === */
-.particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
-.particle {
-  position: absolute; width: 2px; height: 2px; background: var(--accent);
-  border-radius: 50%; opacity: 0;
-  animation: float linear infinite;
-}
-@keyframes float {
-  0% { opacity: 0; transform: translateY(100vh) scale(0); }
-  10% { opacity: 0.6; }
-  90% { opacity: 0.6; }
-  100% { opacity: 0; transform: translateY(-10vh) scale(1); }
-}
-
-/* === SCROLL ANIMATIONS === */
-.fade-up {
-  opacity: 0; transform: translateY(30px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-.fade-up.visible { opacity: 1; transform: translateY(0); }
-
-/* === GUESTBOOK === */
-#guestbook { background: var(--surface); border-top: 1px solid var(--border); }
-#guestbook .container { max-width: 960px; margin: 0 auto; padding: 4rem 2rem; }
-#guestbook h2 { font-size: 1.5rem; margin-bottom: 1rem; }
-.view-count {
-  font-size: 2rem; font-weight: 800;
-  background: linear-gradient(135deg, var(--accent), #a78bfa);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.view-count-label { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
-.guestbook-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-.guestbook-form { margin-bottom: 1.5rem; }
-.guestbook-form input, .guestbook-form textarea {
-  width: 100%; padding: 0.7rem 1rem; border-radius: 8px;
-  border: 1px solid var(--border); background: var(--bg);
-  color: var(--text); font-size: 0.9rem; outline: none;
-  font-family: inherit;
-}
-.guestbook-form input:focus, .guestbook-form textarea:focus { border-color: var(--accent); }
-.guestbook-form textarea { height: 80px; resize: vertical; }
-.guestbook-form .form-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
-.guestbook-form .form-row input { flex: 1; min-width: 120px; }
-.guestbook-form .btn-submit {
-  padding: 0.6rem 1.5rem; border-radius: 8px; font-size: 0.9rem;
-  background: var(--accent); color: #fff; border: none; cursor: pointer;
-  transition: all 0.3s;
-}
-.guestbook-form .btn-submit:hover { background: #4f46e5; transform: translateY(-2px); }
-.guestbook-form .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-.guest-tip { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; min-height: 1.2em; }
-.guest-tip.success { color: var(--green); }
-.guest-tip.error { color: var(--red); }
-
-.guest-list { max-height: 600px; overflow-y: auto; }
-.guest-item { padding: 1rem 0; border-bottom: 1px solid var(--border); }
-.guest-item:last-child { border-bottom: none; }
-.guest-item .meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
-.guest-item .name { color: var(--accent); font-size: 0.9rem; font-weight: 600; }
-.guest-item .date { font-size: 0.75rem; color: var(--muted); }
-.guest-item .msg { font-size: 0.85rem; color: var(--text); line-height: 1.6; word-break: break-word; }
-.guest-empty { color: var(--muted); font-size: 0.85rem; padding: 2rem 0; text-align: center; }
-
-@media (max-width: 640px) {
-  .hero h1 { font-size: 2rem; }
-  nav .links { display: none; }
-  section { padding: 4rem 1.5rem; }
-  .guestbook-form .form-row { flex-direction: column; }
-}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#111118}::-webkit-scrollbar-thumb{background:#1e1e2e;border-radius:3px}::-webkit-scrollbar-thumb:hover{background:#6366f1}
+.particle{position:absolute;width:2px;height:2px;background:#6366f1;border-radius:50%;opacity:0}
+.hero-glow{position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,0.15) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:pulse 8s ease-in-out infinite}
+.project-card{transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.project-card::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(99,102,241,.05),transparent);transition:left .6s ease}
+.project-card:hover::before{left:100%}
+.project-card:hover{transform:translateY(-8px) scale(1.02);border-color:#6366f1;box-shadow:0 20px 60px rgba(99,102,241,.2)}
+.btn-primary{transition:all .3s ease}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(99,102,241,.3)}
+.tech-item{transition:all .3s ease}
+.tech-item:hover{transform:translateY(-2px);border-color:#6366f1;background:rgba(99,102,241,.1)}
+.stat-number{background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-blur{background:rgba(10,10,15,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.fade-up{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+.btn-demo{opacity:0;transform:translateY(10px);transition:all .3s ease}
+.project-card:hover .btn-demo{opacity:1;transform:translateY(0)}
+.chess-board{display:grid;grid-template-columns:repeat(9,1fr);gap:0;aspect-ratio:1;max-width:450px;margin:0 auto;border:2px solid #8b7355;background:#f0d9b5;border-radius:8px}
+.chess-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:clamp(1.2rem,4vw,2rem);cursor:pointer;position:relative;transition:background .15s}
+.chess-cell:hover{background:rgba(99,102,241,.2)}
+.chess-cell.selected{background:rgba(99,102,241,.4)!important}
+.chess-cell.valid-move::after{content:'';position:absolute;width:12px;height:12px;background:rgba(99,102,241,.5);border-radius:50%}
+.piece-red{color:#dc2626;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+.piece-black{color:#1f2937;text-shadow:0 1px 2px rgba(0,0,0,.2)}
 </style>
 </head>
-<body>
-
-<!-- Particles -->
-<div class="particles" id="particles"></div>
-
-<!-- Nav -->
-<nav>
-  <div class="logo">QIN<span>DEV</span></div>
-  <div class="links">
-    <a href="#projects">项目</a>
-    <a href="#stats">数据</a>
-    <a href="#tech">技术栈</a>
-    <a href="#contact">联系</a>
-    <a href="#guestbook">留言</a>
+<body class="bg-bg text-text font-sans overflow-x-hidden">
+<div class="particles fixed inset-0 pointer-events-none z-0 overflow-hidden" id="particles"></div>
+<nav class="nav-blur fixed top-0 left-0 right-0 z-50 border-b border-border px-8 h-16 flex items-center justify-between">
+  <div class="font-bold text-lg tracking-tight">QIN<span class="text-accent">DEV</span></div>
+  <div class="hidden md:flex items-center gap-8">
+    <a href="#projects" class="text-muted hover:text-text text-sm transition-colors">项目</a>
+    <a href="#stats" class="text-muted hover:text-text text-sm transition-colors">数据</a>
+    <a href="#tech" class="text-muted hover:text-text text-sm transition-colors">技术栈</a>
+    <a href="#chess" class="text-muted hover:text-text text-sm transition-colors">象棋</a>`n    <a href="#funds" class="text-muted hover:text-text text-sm transition-colors">基金</a>
+    <a href="#contact" class="text-muted hover:text-text text-sm transition-colors">联系</a>
+    <a href="#guestbook" class="text-muted hover:text-text text-sm transition-colors">留言</a>
   </div>
+  <button class="md:hidden text-muted" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
 </nav>
-
-<!-- Hero -->
-<div class="hero">
-  <div class="avatar">🦞</div>
-  <h1>秦总 <span>全栈开发</span></h1>
-  <p class="subtitle">写代码 · 做产品 · 关注市场<br>用技术解决实际问题</p>
-  <div class="tags">
-    <span>Python</span>
-    <span>Node.js</span>
-    <span>WebRTC</span>
-    <span>Flask</span>
-    <span>全栈开发</span>
-  </div>
-  <div>
-    <a href="#projects" class="btn btn-primary">查看项目</a>
-    <a href="#contact" class="btn btn-outline">联系我</a>
+<div id="mobile-menu" class="hidden fixed top-16 left-0 right-0 z-40 bg-surface border-b border-border p-4 md:hidden">
+  <div class="flex flex-col gap-3">
+    <a href="#projects" class="text-muted hover:text-text text-sm py-2">项目</a>
+    <a href="#stats" class="text-muted hover:text-text text-sm py-2">数据</a>
+    <a href="#tech" class="text-muted hover:text-text text-sm py-2">技术栈</a>
+    <a href="#chess" class="text-muted hover:text-text text-sm py-2">象棋</a>`n    <a href="#funds" class="text-muted hover:text-text text-sm py-2">基金</a>
+    <a href="#contact" class="text-muted hover:text-text text-sm py-2">联系</a>
+    <a href="#guestbook" class="text-muted hover:text-text text-sm py-2">留言</a>
   </div>
 </div>
-
-<!-- Projects -->
-<section id="projects">
-  <h2 class="fade-up">💼 项目</h2>
-  <p class="section-desc fade-up">最近做的几个东西</p>
-  <div class="projects-grid">
-    <div class="project-card fade-up">
-      <div class="icon">♟️</div>
-      <h3>象棋游戏</h3>
-      <p>完整的象棋对弈游戏，支持人机对战和双人对战，已打包为桌面应用。</p>
-      <div class="stack"><span>Python</span><span>Pygame</span><span>EXE打包</span></div>
-    </div>
-    <div class="project-card fade-up">
-      <div class="icon">📞</div>
-      <h3>WebRTC 语音通话</h3>
-      <p>基于WebRTC的双向语音通话系统，支持实时音视频通信，低延迟高清晰。</p>
-      <div class="stack"><span>Node.js</span><span>Socket.io</span><span>WebRTC</span><span>Express</span></div>
-    </div>
-    <div class="project-card fade-up">
-      <div class="icon">🤖</div>
-      <h3>飞书机器人</h3>
-      <p>飞书智能机器人，支持桌面文件管理、消息自动化、数据爬取等功能。</p>
-      <div class="stack"><span>Flask</span><span>飞书API</span><span>Python</span><span>Webhook</span></div>
-    </div>
-    <div class="project-card fade-up">
-      <div class="icon">📊</div>
-      <h3>基金数据爬虫</h3>
-      <p>自动爬取天天基金净值数据，定时更新，支持多基金监控和历史数据分析。</p>
-      <div class="stack"><span>Python</span><span>BeautifulSoup</span><span>Cron</span><span>爬虫</span></div>
-    </div>
+<div class="min-h-screen flex flex-col items-center justify-center text-center relative px-4 pt-16">
+  <div class="hero-glow"></div>
+  <div class="w-24 h-24 rounded-full bg-gradient-to-br from-accent to-purple-500 flex items-center justify-center text-5xl mb-6 shadow-lg shadow-accent/20">&#x1F99E;</div>
+  <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-3">秦总 <span class="bg-gradient-to-r from-accent to-purple-400 bg-clip-text text-transparent">全栈开发</span></h1>
+  <p class="text-lg text-muted mb-8 max-w-md">写代码 · 做产品 · 关注市场<br>用技术解决实际问题</p>
+  <div class="flex flex-wrap gap-2 justify-center mb-8">
+    <span class="px-4 py-1.5 rounded-full text-xs bg-surface border border-border text-muted">Python</span>
+    <span class="px-4 py-1.5 rounded-full text-xs bg-surface border border-border text-muted">Node.js</span>
+    <span class="px-4 py-1.5 rounded-full text-xs bg-surface border border-border text-muted">WebRTC</span>
+    <span class="px-4 py-1.5 rounded-full text-xs bg-surface border border-border text-muted">Flask</span>
+    <span class="px-4 py-1.5 rounded-full text-xs bg-surface border border-border text-muted">全栈开发</span>
+  </div>
+  <div class="flex gap-4">
+    <a href="#projects" class="btn-primary px-8 py-3 rounded-lg bg-accent text-white font-semibold">查看项目</a>
+    <a href="#contact" class="px-8 py-3 rounded-lg border border-border text-text font-semibold hover:border-accent transition-colors">联系我</a>
+  </div>
+</div>
+<section id="projects" class="py-24 px-4 max-w-6xl mx-auto">
+  <h2 class="text-3xl font-bold mb-2 fade-up">&#x1F4BC; 项目</h2>
+  <p class="text-muted mb-12 fade-up">最近做的几个东西</p>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="projects-grid"></div>
+</section>
+<section id="stats" class="py-24 px-4 max-w-6xl mx-auto">
+  <h2 class="text-3xl font-bold mb-2 fade-up">&#x1F4C8; 数据概览</h2>
+  <p class="text-muted mb-12 fade-up">一些关键数字</p>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div class="bg-surface border border-border rounded-xl p-6 text-center fade-up"><div class="stat-number text-4xl font-extrabold" id="stat-projects">0</div><div class="text-muted text-sm mt-1">完成项目</div></div>
+    <div class="bg-surface border border-border rounded-xl p-6 text-center fade-up"><div class="stat-number text-4xl font-extrabold" id="stat-uptime">0</div><div class="text-muted text-sm mt-1">天稳定运行</div></div>
+    <div class="bg-surface border border-border rounded-xl p-6 text-center fade-up"><div class="stat-number text-4xl font-extrabold" id="stat-views">0</div><div class="text-muted text-sm mt-1">总访问量</div></div>
+    <div class="bg-surface border border-border rounded-xl p-6 text-center fade-up"><div class="stat-number text-4xl font-extrabold">&#x221E;</div><div class="text-muted text-sm mt-1">学习动力</div></div>
   </div>
 </section>
-
-<!-- Stats -->
-<section id="stats">
-  <h2 class="fade-up">📈 数据概览</h2>
-  <p class="section-desc fade-up">一些关键数字</p>
-  <div class="stats-grid">
-    <div class="stat-card fade-up">
-      <div class="number">4+</div>
-      <div class="label">完成项目</div>
-    </div>
-    <div class="stat-card fade-up">
-      <div class="number">5+</div>
-      <div class="label">编程语言</div>
-    </div>
-    <div class="stat-card fade-up">
-      <div class="number">24/7</div>
-      <div class="label">AI助手在线</div>
-    </div>
-    <div class="stat-card fade-up">
-      <div class="number">∞</div>
-      <div class="label">学习动力</div>
-    </div>
+<section id="tech" class="py-24 px-4 max-w-6xl mx-auto">
+  <h2 class="text-3xl font-bold mb-2 fade-up">&#x1F6E0; 技术栈</h2>
+  <p class="text-muted mb-12 fade-up">日常使用的技术和工具</p>
+  <div class="flex flex-wrap gap-3 fade-up">
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">Python</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">JavaScript</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">Node.js</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">Flask</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">Express</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">WebRTC</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">Tailwind CSS</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">Cloudflare Workers</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">D1 Database</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">Canvas</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">Git</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">飞书 API</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">SQL</div>
+    <div class="tech-item px-5 py-2.5 rounded-lg bg-surface border border-border text-sm">REST API</div>
   </div>
 </section>
-
-<!-- Tech -->
-<section id="tech">
-  <h2 class="section-title fade-up">🛠 技术栈</h2>
-  <p class="section-desc fade-up">日常使用的技术和工具</p>
-  <div class="tech-grid fade-up">
-    <div class="tech-item">Python</div>
-    <div class="tech-item">JavaScript</div>
-    <div class="tech-item">Node.js</div>
-    <div class="tech-item">Flask</div>
-    <div class="tech-item">Express</div>
-    <div class="tech-item">WebRTC</div>
-    <div class="tech-item">Socket.io</div>
-    <div class="tech-item">HTML5 / CSS3</div>
-    <div class="tech-item">Git</div>
-    <div class="tech-item">飞书 API</div>
-    <div class="tech-item">BeautifulSoup</div>
-    <div class="tech-item">Pygame</div>
-    <div class="tech-item">PowerShell</div>
-    <div class="tech-item">SQL</div>
-    <div class="tech-item">REST API</div>
-  </div>
-</section>
-
-<!-- Contact -->
-<section id="contact">
-  <div class="contact-box fade-up">
-    <h2>📬 联系</h2>
-    <p>有项目合作或技术交流？随时联系</p>
-    <div class="contact-links">
-      <a href="#">飞书</a>
-      <a href="#">微信</a>
-      <a href="mailto:">邮箱</a>
-    </div>
-  </div>
-</section>
-
-<!-- 访问统计 & 留言板 -->
-<section id="guestbook">
-  <div class="container">
-    <div class="guestbook-header">
-      <h2 class="fade-up">📊 访客统计</h2>
-      <div class="fade-up view-count">
-        <span id="view-count">0</span> <span class="view-count-label">次访问</span>
+<section id="chess" class="py-24 px-4 max-w-6xl mx-auto">
+  <h2 class="text-3xl font-bold mb-2 fade-up">&#x265F; 中国象棋</h2>
+  <p class="text-muted mb-8 fade-up">Web 版 · 双人对弈</p>
+  <div class="fade-up">
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+      <div class="flex-1 w-full max-w-[500px] mx-auto">
+        <div id="chess-status" class="text-center mb-4 text-lg font-semibold text-accent">红方先行</div>
+        <div id="chess-board" class="chess-board shadow-2xl"></div>
+        <div class="mt-4 flex gap-3 justify-center">
+          <button onclick="resetChess()" class="px-6 py-2 rounded-lg bg-surface border border-border text-sm hover:border-accent transition-colors">重新开始</button>
+          <button onclick="undoChess()" class="px-6 py-2 rounded-lg bg-surface border border-border text-sm hover:border-accent transition-colors">悔棋</button>
+        </div>
+      </div>
+      <div class="w-full lg:w-64 bg-surface border border-border rounded-xl p-6">
+        <h3 class="font-semibold mb-4">游戏说明</h3>
+        <ul class="text-sm text-muted space-y-2">
+          <li>• 点击棋子选中</li>
+          <li>• 点击目标位置移动</li>
+          <li>• 红方先行，轮流走棋</li>
+          <li>• 支持标准象棋规则</li>
+          <li>• 双人对弈模式</li>
+        </ul>
+        <div class="mt-6 pt-4 border-t border-border">
+          <div class="text-xs text-muted mb-2">当前回合</div>
+          <div id="chess-turn" class="text-2xl font-bold" style="color:#dc2626">红方</div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-border">
+          <div class="text-xs text-muted mb-2">吃子</div>
+          <div id="chess-captured" class="text-sm">红方: 无 | 黑方: 无</div>
+        </div>
       </div>
     </div>
-
-    <h2 class="fade-up" style="font-size:1.5rem;margin-bottom:1rem;">💬 留言板</h2>
-    <div class="fade-up guestbook-form">
-      <div class="form-row">
-        <input id="guest-name" placeholder="你的昵称" maxlength="20" />
-      </div>
-      <div class="form-row">
-        <textarea id="guest-msg" placeholder="说点什么吧..." maxlength="500"></textarea>
-      </div>
-      <div class="form-row">
-        <button class="btn-submit" id="btn-submit" onclick="submitGuestbook()">发表留言</button>
-      </div>
-      <div class="guest-tip" id="guest-tip"></div>
-    </div>
-
-    <div class="guest-list fade-up" id="guest-list">
-      <div class="guest-empty">加载中...</div>
+  </div>
+</section>
+<section id="contact" class="py-24 px-4 max-w-6xl mx-auto">
+  <div class="bg-surface border border-border rounded-2xl p-12 text-center fade-up">
+    <h2 class="text-3xl font-bold mb-4">&#x1F4EC; 联系</h2>
+    <p class="text-muted mb-8">有项目合作或技术交流？随时联系</p>
+    <div class="flex gap-4 justify-center flex-wrap">
+      <a href="#" class="px-6 py-3 rounded-lg bg-bg border border-border text-sm hover:border-accent transition-colors">飞书</a>
+      <a href="#" class="px-6 py-3 rounded-lg bg-bg border border-border text-sm hover:border-accent transition-colors">微信</a>
+      <a href="mailto:" class="px-6 py-3 rounded-lg bg-bg border border-border text-sm hover:border-accent transition-colors">邮箱</a>
     </div>
   </div>
 </section>
-
-<!-- Footer -->
-<footer>
-  <p>© 2026 秦总 · 用技术解决实际问题</p>
-</footer>
+<section id="guestbook" class="py-24 px-4 bg-surface border-t border-border">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-2xl font-bold mb-8 fade-up">&#x1F4AC; 留言板</h2>
+    <div class="fade-up mb-8">
+      <div class="flex gap-3 mb-3 flex-wrap">
+        <input id="guest-name" placeholder="你的昵称" maxlength="20" class="flex-1 min-w-[120px] px-4 py-3 rounded-lg border border-border bg-bg text-text text-sm outline-none focus:border-accent transition-colors" />
+      </div>
+      <div class="flex gap-3 mb-3">
+        <textarea id="guest-msg" placeholder="说点什么吧..." maxlength="500" class="w-full px-4 py-3 rounded-lg border border-border bg-bg text-text text-sm outline-none focus:border-accent transition-colors h-20 resize-y"></textarea>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="px-6 py-2.5 rounded-lg bg-accent text-white text-sm font-semibold hover:opacity-90 transition-opacity" id="btn-submit" onclick="submitGuestbook()">发表留言</button>
+        <span class="text-xs text-muted" id="guest-tip"></span>
+      </div>
+    </div>
+    <div class="max-h-[500px] overflow-y-auto fade-up" id="guest-list"><div class="text-muted text-sm text-center py-8">加载中...</div></div>
+  </div>
+</section>
+<footer class="text-center py-8 text-muted text-xs border-t border-border"><p>&copy; 2026 秦总 · 用技术解决实际问题</p></footer>
 
 <script>
-// ===== Particles =====
-(function() {
-  const container = document.getElementById('particles');
-  for (let i = 0; i < 30; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDuration = (Math.random() * 15 + 10) + 's';
-    p.style.animationDelay = (Math.random() * 10) + 's';
-    p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
-    container.appendChild(p);
-  }
-})();
+// Particles
+(function(){const c=document.getElementById('particles');for(let i=0;i<30;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(Math.random()*15+10)+'s';p.style.animationDelay=(Math.random()*10)+'s';p.style.width=p.style.height=(Math.random()*3+1)+'px';c.appendChild(p)}})();
 
-// ===== Scroll animations =====
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+// Scroll animations
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
 
-// ===== Smooth scroll =====
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    e.preventDefault();
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-});
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t){t.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('mobile-menu')?.classList.add('hidden')}})});
 
-// ===== 访问统计 (localStorage) =====
-function updateViewCount() {
-  try {
-    let count = parseInt(localStorage.getItem('qindev_views') || '0');
-    count++;
-    localStorage.setItem('qindev_views', count.toString());
-    document.getElementById('view-count').textContent = count.toLocaleString();
-  } catch(e) {
-    document.getElementById('view-count').textContent = '--';
-  }
+// Projects
+async function loadProjects(){
+  const grid=document.getElementById('projects-grid');
+  try{
+    const resp=await fetch('/api/projects');
+    const result=await resp.json();
+    const list=result.data||[];
+    if(list.length===0){grid.innerHTML='<div class="text-muted text-sm col-span-2">暂无项目</div>';return}
+    grid.innerHTML=list.map(p=>'<div class="project-card bg-surface border border-border rounded-xl p-6 fade-up"><div class="text-3xl mb-4">'+p.icon+'</div><h3 class="text-lg font-semibold mb-2">'+p.name+'</h3><p class="text-muted text-sm mb-4">'+p.desc+'</p><div class="flex flex-wrap gap-2 mb-4">'+(p.stack||[]).map(s=>'<span class="text-xs px-2 py-1 rounded bg-accent/10 text-accent">'+s+'</span>').join('')+'</div><button class="btn-demo px-4 py-2 rounded-lg bg-accent/10 text-accent text-sm font-semibold hover:bg-accent/20 transition-colors" onclick="alert(\'Live Demo 开发中\')">&#x1F680; Live Demo</button></div>').join('');
+    grid.querySelectorAll('.fade-up').forEach(el=>observer.observe(el));
+  }catch(e){grid.innerHTML='<div class="text-muted text-sm col-span-2">加载失败</div>'}
 }
+loadProjects();
 
-// ===== 留言板 (localStorage) =====
-const STORAGE_KEY = 'qindev_guestbook';
-
-function getGuestbook() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  } catch(e) {
-    return [];
-  }
+// Stats
+async function updateStats(){
+  try{const resp=await fetch('/api/count');const data=await resp.json();document.getElementById('stat-views').textContent=(data.count||0).toLocaleString()}catch(e){}
+  try{const presp=await fetch("/api/projects");const presult=await presp.json();const pcnt=(presult.data||[]).length;document.getElementById("stat-projects").textContent=pcnt>0?pcnt+"+":"0"}catch(e){}(1,Math.floor((Date.now()-new Date('2026-05-15').getTime())/86400000));
+  document.getElementById('stat-uptime').textContent=days;
 }
+updateStats();
 
-function saveGuestbook(list) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-  } catch(e) {
-    console.error('保存留言失败:', e);
-  }
+// Guestbook
+async function loadGuestbook(){
+  const c=document.getElementById('guest-list');
+  try{
+    const resp=await fetch('/api/guestbook');
+    const result=await resp.json();
+    const list=result.data||[];
+    if(list.length===0){c.innerHTML='<div class="text-muted text-sm text-center py-8">还没有留言，来抢沙发吧！</div>';return}
+    c.innerHTML=list.slice(0,20).map(item=>{const d=new Date(item.time).toLocaleDateString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit'});return '<div class="py-4 border-b border-border last:border-0"><div class="flex justify-between items-center mb-1"><span class="text-accent text-sm font-semibold">'+esc(item.name)+'</span><span class="text-xs text-muted">'+d+'</span></div><div class="text-sm leading-relaxed break-words">'+esc(item.message).replace(/\n/g,'<br>')+'</div></div>'}).join('');
+  }catch(e){c.innerHTML='<div class="text-muted text-sm text-center py-8">加载失败</div>'}
 }
-
-function loadGuestbook() {
-  const list = getGuestbook();
-  const container = document.getElementById('guest-list');
-
-  if (list.length === 0) {
-    container.innerHTML = '<div class="guest-empty">还没有留言，来抢沙发吧！</div>';
-    return;
-  }
-
-  // 显示最近20条，按时间倒序
-  const recent = list.slice(0, 20);
-  container.innerHTML = recent.map(item => {
-    const date = new Date(item.time).toLocaleDateString('zh-CN', {
-      year: 'numeric', month: '2-digit', day: '2-digit'
-    });
-    const msg = escapeHtml(item.message).replace(/\n/g, '<br>');
-    return `<div class="guest-item">
-      <div class="meta">
-        <span class="name">${escapeHtml(item.name)}</span>
-        <span class="date">${date}</span>
-      </div>
-      <div class="msg">${msg}</div>
-    </div>`;
-  }).join('');
-}
-
-function submitGuestbook() {
-  const name = document.getElementById('guest-name').value.trim();
-  const msg = document.getElementById('guest-msg').value.trim();
-  const tip = document.getElementById('guest-tip');
-  const btn = document.getElementById('btn-submit');
-
-  if (!name) { tip.textContent = '请填写昵称'; tip.className = 'guest-tip error'; return; }
-  if (!msg) { tip.textContent = '请填写留言内容'; tip.className = 'guest-tip error'; return; }
-  if (name.length > 20) { tip.textContent = '昵称最多20个字'; tip.className = 'guest-tip error'; return; }
-  if (msg.length > 500) { tip.textContent = '留言最多500个字'; tip.className = 'guest-tip error'; return; }
-
-  btn.disabled = true;
-  tip.textContent = '提交中...';
-  tip.className = 'guest-tip';
-
-  // 模拟网络延迟
-  setTimeout(() => {
-    try {
-      const list = getGuestbook();
-      list.unshift({
-        name: name,
-        message: msg,
-        time: new Date().toISOString()
-      });
-      // 只保留最近200条
-      if (list.length > 200) list.length = 200;
-      saveGuestbook(list);
-
-      document.getElementById('guest-name').value = '';
-      document.getElementById('guest-msg').value = '';
-      tip.textContent = '留言成功！';
-      tip.className = 'guest-tip success';
-      loadGuestbook();
-    } catch(e) {
-      tip.textContent = '提交失败，请重试';
-      tip.className = 'guest-tip error';
-    }
-    btn.disabled = false;
-  }, 300);
-}
-
-function escapeHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-// ===== 页面加载时执行 =====
-updateViewCount();
 loadGuestbook();
+
+async function submitGuestbook(){
+  const name=document.getElementById('guest-name').value.trim();
+  const msg=document.getElementById('guest-msg').value.trim();
+  const tip=document.getElementById('guest-tip');
+  const btn=document.getElementById('btn-submit');
+  if(!name){tip.textContent='请填写昵称';tip.className='text-xs text-red';return}
+  if(!msg){tip.textContent='请填写留言';tip.className='text-xs text-red';return}
+  btn.disabled=true;tip.textContent='提交中...';tip.className='text-xs text-muted';
+  try{
+    const resp=await fetch('/api/guestbook',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,message:msg})});
+    const result=await resp.json();
+    if(resp.ok){document.getElementById('guest-name').value='';document.getElementById('guest-msg').value='';tip.textContent='留言成功！';tip.className='text-xs text-green';loadGuestbook()}
+    else{tip.textContent=result.error||'提交失败';tip.className='text-xs text-red'}
+  }catch(e){tip.textContent='网络错误';tip.className='text-xs text-red'}
+  btn.disabled=false;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ===== 中国象棋 =====
+const PIECES={r_che:'車',r_ma:'馬',r_xiang:'相',r_shi:'仕',r_shuai:'帥',r_pao:'炮',r_bing:'兵',b_che:'车',b_ma:'马',b_xiang:'象',b_shi:'士',b_jiang:'将',b_pao:'砲',b_zu:'卒'};
+
+let chess={board:[],turn:'red',selected:null,validMoves:[],history:[],captured:{red:[],black:[]}};
+
+function initChess(){
+  const b=Array(10).fill(null).map(()=>Array(9).fill(null));
+  b[0]=['b_che','b_ma','b_xiang','b_shi','b_jiang','b_shi2','b_xiang2','b_ma2','b_che2'];
+  b[2][1]='b_pao';b[2][7]='b_pao2';
+  b[3][0]='b_zu1';b[3][2]='b_zu2';b[3][4]='b_zu3';b[3][6]='b_zu4';b[3][8]='b_zu5';
+  b[9]=['r_che','r_ma','r_xiang','r_shi','r_shuai','r_shi2','r_xiang2','r_ma2','r_che2'];
+  b[7][1]='r_pao';b[7][7]='r_pao2';
+  b[6][0]='r_bing1';b[6][2]='r_bing2';b[6][4]='r_bing3';b[6][6]='r_bing4';b[6][8]='r_bing5';
+  chess.board=b;chess.turn='red';chess.selected=null;chess.validMoves=[];chess.history=[];chess.captured={red:[],black:[]};
+  renderChess();
+}
+
+function pType(id){return id?id.replace(/\d+$/,'').replace(/2$/,''):null}
+function pColor(id){return id&&id.startsWith('r_')?'red':(id&&id.startsWith('b_')?'black':null)}
+
+function countBetween(b,r1,c1,r2,c2){
+  let cnt=0;
+  if(r1===r2){const mn=Math.min(c1,c2),mx=Math.max(c1,c2);for(let c=mn+1;c<mx;c++)if(b[r1][c])cnt++}
+  else if(c1===c2){const mn=Math.min(r1,r2),mx=Math.max(r1,r2);for(let r=mn+1;r<mx;r++)if(b[r][c1])cnt++}
+  return cnt;
+}
+
+function canMove(board,piece,fr,fc,tr,tc){
+  if(tr<0||tr>9||tc<0||tc>8)return false;
+  const tgt=board[tr][tc];
+  if(tgt&&pColor(tgt)===pColor(piece))return false;
+  const t=pType(piece),dr=tr-fr,dc=tc-fc,ad=Math.abs(dr),ac=Math.abs(dc);
+  switch(t){
+    case 'che':if(dr!==0&&dc!==0)return false;return countBetween(board,fr,fc,tr,tc)===0;
+    case 'ma':if(!((ad===2&&ac===1)||(ad===1&&ac===2)))return false;
+      if(ad===2)return !board[fr+(dr>0?1:-1)][fc];else return !board[fr][fc+(dc>0?1:-1)];
+    case 'xiang':if(!(ad===2&&ac===2))return false;
+      if(pColor(piece)==='red'&&tr<5)return false;if(pColor(piece)==='black'&&tr>4)return false;
+      return !board[fr+dr/2][fc+dc/2];
+    case 'shi':if(!(ad===1&&ac===1))return false;if(tc<3||tc>5)return false;
+      if(pColor(piece)==='red'&&tr<7)return false;if(pColor(piece)==='black'&&tr>2)return false;return true;
+    case 'shuai':case 'jiang':if(!((ad===1&&dc===0)||(ad===0&&ac===1)))return false;
+      if(tc<3||tc>5)return false;
+      if(pColor(piece)==='red'&&tr<7)return false;if(pColor(piece)==='black'&&tr>2)return false;return true;
+    case 'pao':if(dr!==0&&dc!==0)return false;const cnt=countBetween(board,fr,fc,tr,tc);if(tgt)return cnt===1;else return cnt===0;
+    case 'bing':case 'zu':
+      if(pColor(piece)==='red'){if(fr>4)return dr===-1&&dc===0;else return(dr===-1&&dc===0)||(dr===0&&ac===1)}
+      else{if(fr<5)return dr===1&&dc===0;else return(dr===1&&dc===0)||(dr===0&&ac===1)}
+    default:return false;
+  }
+}
+
+function renderChess(){
+  const el=document.getElementById('chess-board');
+  el.innerHTML='';
+  for(let r=0;r<10;r++){
+    if(r===5){
+      const river=document.createElement('div');
+      river.className='chess-cell';
+      river.style.cssText='grid-column:1/-1;text-align:center;font-size:.75rem;color:#8b7355;letter-spacing:1.5rem;background:#f0d9b5;user-select:none';
+      river.textContent='楚 河          汉 界';
+      el.appendChild(river);
+      continue;
+    }
+    for(let c=0;c<9;c++){
+      const cell=document.createElement('div');
+      cell.className='chess-cell';
+      cell.dataset.row=r;cell.dataset.col=c;
+      const piece=chess.board[r][c];
+      if(piece){
+        const isRed=pColor(piece)==='red';
+        cell.innerHTML='<span class="'+(isRed?'piece-red':'piece-black')+'">'+PIECES[pType(piece)]+'</span>';
+      }
+      if(chess.selected&&chess.selected.row===r&&chess.selected.col===c)cell.classList.add('selected');
+      if(chess.validMoves.some(m=>m.row===r&&m.col===c))cell.classList.add('valid-move');
+      cell.onclick=()=>onCellClick(r,c);
+      el.appendChild(cell);
+    }
+  }
+  document.getElementById('chess-turn').textContent=chess.turn==='red'?'红方':'黑方';
+  document.getElementById('chess-turn').style.color=chess.turn==='red'?'#dc2626':'#1f2937';
+  const rc=chess.captured.red,bc=chess.captured.black;
+  document.getElementById('chess-captured').textContent='红方:'+(rc.length?rc.join(' '):'无')+' | 黑方:'+(bc.length?bc.join(' '):'无');
+}
+
+function onCellClick(r,c){
+  const piece=chess.board[r][c];
+  if(chess.selected){
+    const move=chess.validMoves.find(m=>m.row===r&&m.col===c);
+    if(move){doMove(chess.selected.row,chess.selected.col,r,c);return}
+  }
+  if(piece&&pColor(piece)===chess.turn){
+    chess.selected={row:r,col:c};
+    chess.validMoves=[];
+    for(let tr=0;tr<10;tr++)for(let tc=0;tc<9;tc++){
+      if(canMove(chess.board,piece,r,c,tr,tc))chess.validMoves.push({row:tr,col:tc});
+    }
+  }else{chess.selected=null;chess.validMoves=[]}
+  renderChess();
+}
+
+function doMove(fr,fc,tr,tc){
+  const board=chess.board.map(r=>[...r]);
+  const piece=board[fr][fc];
+  const captured=board[tr][tc];
+  chess.history.push({board:board,piece:piece,from:{row:fr,col:fc},to:{row:tr,col:tc},captured:captured,turn:chess.turn});
+  if(captured){chess.captured[chess.turn].push(PIECES[pType(captured)])}
+  board[tr][tc]=piece;board[fr][fc]=null;
+  chess.board=board;
+  chess.turn=chess.turn==='red'?'black':'red';
+  chess.selected=null;chess.validMoves=[];
+  renderChess();
+}
+
+function resetChess(){initChess()}
+function undoChess(){
+  if(chess.history.length===0)return;
+  const last=chess.history.pop();
+  chess.board=last.board;
+  chess.turn=last.turn;
+  if(last.captured){chess.captured[last.turn].pop()}
+  chess.selected=null;chess.validMoves=[];
+  renderChess();
+}
+
+initChess();
+</script>
+
+
+<section id="funds" class="py-24 px-4 max-w-6xl mx-auto">
+  <h2 class="text-3xl font-bold mb-2 fade-up">&#x1F4C8; 基金净值走势</h2>
+  <p class="text-muted mb-8 fade-up">天天基金数据 · 实时更新</p>
+  <div class="fade-up mb-6">
+    <div class="flex flex-wrap gap-2" id="fund-tabs"></div>
+  </div>
+  <div class="fade-up bg-surface border border-border rounded-xl p-6">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <div id="fund-name" class="text-xl font-semibold">选择基金</div>
+        <div id="fund-code" class="text-sm text-muted"></div>
+      </div>
+      <div class="text-right">
+        <div id="fund-nav" class="text-2xl font-bold text-accent">--</div>
+        <div id="fund-change" class="text-sm">--</div>
+      </div>
+    </div>
+    <div id="fund-chart" class="w-full h-[300px]"></div>
+    <div id="fund-stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t border-border"></div>
+  </div>
+</section>
+
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script>
+// 基金可视化
+let fundChart = null;
+let fundData = [];
+
+async function loadFunds() {
+  try {
+    const resp = await fetch('/api/fund');
+    const result = await resp.json();
+    fundData = result.data || [];
+    if (fundData.length === 0) {
+      document.getElementById('fund-chart').innerHTML = '<div class="flex items-center justify-center h-full text-muted">暂无数据</div>';
+      return;
+    }
+    renderTabs();
+    selectFund(fundData[0].code);
+  } catch(e) {
+    document.getElementById('fund-chart').innerHTML = '<div class="flex items-center justify-center h-full text-muted">加载失败</div>';
+  }
+}
+
+function renderTabs() {
+  const tabs = document.getElementById('fund-tabs');
+  tabs.innerHTML = fundData.map((f, i) => 
+    `<button onclick="selectFund('${f.code}')" class="px-4 py-2 rounded-lg text-sm transition-all ${i===0?'bg-accent text-white':'bg-surface border border-border text-muted hover:border-accent'}" id="tab-${f.code}">${f.name}</button>`
+  ).join('');
+}
+
+function selectFund(code) {
+  const fund = fundData.find(f => f.code === code);
+  if (!fund) return;
+  
+  // 更新 tab 样式
+  fundData.forEach(f => {
+    const tab = document.getElementById('tab-' + f.code);
+    if (tab) {
+      if (f.code === code) {
+        tab.className = 'px-4 py-2 rounded-lg text-sm transition-all bg-accent text-white';
+      } else {
+        tab.className = 'px-4 py-2 rounded-lg text-sm transition-all bg-surface border border-border text-muted hover:border-accent';
+      }
+    }
+  });
+
+  // 更新信息
+  const latest = fund.data[fund.data.length - 1];
+  const prev = fund.data[fund.data.length - 2];
+  document.getElementById('fund-name').textContent = fund.name;
+  document.getElementById('fund-code').textContent = fund.code;
+  document.getElementById('fund-nav').textContent = latest.nav.toFixed(4);
+  
+  const change = latest.change;
+  const changeEl = document.getElementById('fund-change');
+  changeEl.textContent = (change >= 0 ? '+' : '') + change + '%';
+  changeEl.className = 'text-sm ' + (change >= 0 ? 'text-green' : 'text-red');
+
+  // 统计
+  const navs = fund.data.map(d => d.nav);
+  const max = Math.max(...navs);
+  const min = Math.min(...navs);
+  const avg = navs.reduce((a,b) => a+b, 0) / navs.length;
+  const totalReturn = ((latest.nav - fund.data[0].nav) / fund.data[0].nav * 100).toFixed(2);
+  
+  document.getElementById('fund-stats').innerHTML = `
+    <div class="text-center"><div class="text-lg font-bold text-green">${max.toFixed(4)}</div><div class="text-xs text-muted">最高净值</div></div>
+    <div class="text-center"><div class="text-lg font-bold text-red">${min.toFixed(4)}</div><div class="text-xs text-muted">最低净值</div></div>
+    <div class="text-center"><div class="text-lg font-bold text-accent">${avg.toFixed(4)}</div><div class="text-xs text-muted">平均净值</div></div>
+    <div class="text-center"><div class="text-lg font-bold ${totalReturn>=0?'text-green':'text-red'}">${totalReturn>=0?'+':''}${totalReturn}%</div><div class="text-xs text-muted">区间收益</div></div>
+  `;
+
+  // 渲染图表
+  renderChart(fund);
+}
+
+function renderChart(fund) {
+  const chartDom = document.getElementById('fund-chart');
+  if (!fundChart) {
+    fundChart = echarts.init(chartDom);
+    window.addEventListener('resize', () => fundChart.resize());
+  }
+
+  const dates = fund.data.map(d => d.date);
+  const navs = fund.data.map(d => d.nav);
+  const changes = fund.data.map(d => d.change);
+
+  const option = {
+    backgroundColor: 'transparent',
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: '#111118',
+      borderColor: '#1e1e2e',
+      textStyle: { color: '#e4e4e7' },
+      formatter: function(params) {
+        const i = params[0].dataIndex;
+        const change = changes[i];
+        return `<div class="font-semibold">${dates[i]}</div>
+                <div>净值: <span class="text-accent">${navs[i]}</span></div>
+                <div>涨跌: <span class="${change>=0?'text-green':'text-red'}">${change>=0?'+':''}${change}%</span></div>`;
+      }
+    },
+    grid: { left: 50, right: 20, top: 20, bottom: 30 },
+    xAxis: {
+      type: 'category',
+      data: dates,
+      axisLine: { lineStyle: { color: '#1e1e2e' } },
+      axisLabel: { color: '#71717a', fontSize: 11 }
+    },
+    yAxis: {
+      type: 'value',
+      scale: true,
+      axisLine: { lineStyle: { color: '#1e1e2e' } },
+      axisLabel: { color: '#71717a', fontSize: 11 },
+      splitLine: { lineStyle: { color: '#1e1e2e', type: 'dashed' } }
+    },
+    series: [{
+      name: '净值',
+      type: 'line',
+      data: navs,
+      smooth: true,
+      symbol: 'circle',
+      symbolSize: 4,
+      lineStyle: { color: '#6366f1', width: 2 },
+      itemStyle: { color: '#6366f1' },
+      areaStyle: {
+        color: {
+          type: 'linear',
+          x: 0, y: 0, x2: 0, y2: 1,
+          colorStops: [
+            { offset: 0, color: 'rgba(99,102,241,0.3)' },
+            { offset: 1, color: 'rgba(99,102,241,0)' }
+          ]
+        }
+      }
+    }]
+  };
+
+  fundChart.setOption(option);
+}
+
+// 页面加载时初始化
+loadFunds();
 </script>
 </body>
 </html>
+
+
+
+

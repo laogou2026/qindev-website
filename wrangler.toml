@@ -1,7 +1,18 @@
-name = "qindev-api"
-main = "worker.js"
+name = "qindev-site"
 compatibility_date = "2024-01-01"
+pages_build_output_dir = "."
 
+[vars]
+ENV = "production"
+D1_DATABASE_ID = "e11f6b6b-125a-4d6c-a2b9-90c9bf5ebd52"
+
+# KV 命名空间（限流计数器）
 [[kv_namespaces]]
-binding = "KV"
-id = "PLACEHOLDER_KV_ID"
+binding = "DATA"
+id = "968b17a036e742ad8e1764d5e8da91c2"
+
+# D1 数据库
+[[d1_databases]]
+binding = "DB"
+database_name = "qindev-db"
+database_id = "e11f6b6b-125a-4d6c-a2b9-90c9bf5ebd52"
